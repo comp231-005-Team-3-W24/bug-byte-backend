@@ -5,8 +5,7 @@ const jwt = require("jsonwebtoken");
 const { getRolefromToken } = require("../utils/getUserRole");
 require("dotenv").config();
 async function httpGetAllUsers(req, res) {
-  const authorized =
-    getRolefromToken(req.headers.authorization) === "administrator";
+  const authorized = getRolefromToken(req.headers.authorization) === "admin";
   if (authorized) {
     data = await findAllUsers();
     res.json({ message: "Get all users", data });
@@ -63,7 +62,7 @@ async function httpPostRegisterUser(req, res, next) {
             const token = jwt.sign({ user }, process.env.JWT_SECRET);
             res.status(200).json({
               success: true,
-              userData:user,
+              userData: user,
               token,
             });
           }
@@ -92,8 +91,8 @@ async function httpPostLogin(req, res, next) {
         res.json({
           success: true,
           status: "Login Successfully",
-          userData:user,
-          role:user.role,
+          userData: user,
+          role: user.role,
           token,
         });
       });
