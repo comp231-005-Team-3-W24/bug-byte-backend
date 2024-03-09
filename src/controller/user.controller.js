@@ -5,7 +5,8 @@ const jwt = require("jsonwebtoken");
 const { getRolefromToken } = require("../utils/getUserRole");
 require("dotenv").config();
 async function httpGetAllUsers(req, res) {
-  const authorized = getRolefromToken(req.headers.authorization) === "admin";
+  const authorized =
+    getRolefromToken(req.headers.authorization) === "administrator";
   if (authorized) {
     data = await findAllUsers();
     res.json({ message: "Get all users", data });
