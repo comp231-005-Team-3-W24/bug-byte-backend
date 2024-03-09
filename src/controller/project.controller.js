@@ -6,10 +6,14 @@ const {
   removeUserFromProject,
 } = require("../model/project.model");
 const { findUser } = require("../model/user.model");
-const { getRolefromToken, getUserIdFromToken } = require("../utils/getUserRole");
+const {
+  getRolefromToken,
+  getUserIdFromToken,
+} = require("../utils/getUserRole");
 
 async function getAllProejcts(req, res, next) {
-  const authorized = getRolefromToken(req.headers.authorization) === "administrator";
+  const authorized =
+    getRolefromToken(req.headers.authorization) === "administrator";
   if (authorized) {
     const projects = await allProjects();
     if (projects) {
@@ -43,7 +47,6 @@ async function getAllProjectsByUserId(req, res, next) {
 }
 async function postCreateProject(req, res, next) {
   const authorized =
-    getRolefromToken(req.headers.authorization) === "tester" ||
     getRolefromToken(req.headers.authorization) === "administrator";
   if (authorized) {
     const project = req.body;
@@ -67,7 +70,8 @@ async function postCreateProject(req, res, next) {
 async function putUpdateProjectUsers(req, res, next) {
   const projectId = req.params.projectId;
   const newUserId = req.body.userId;
-  const authorized = getRolefromToken(req.headers.authorization) === "administrator";
+  const authorized =
+    getRolefromToken(req.headers.authorization) === "administrator";
   if (authorized) {
     try {
       const user = await findUser({ _id: newUserId });
@@ -86,7 +90,8 @@ async function putUpdateProjectUsers(req, res, next) {
   }
 }
 async function putRemoveUserFromProject(req, res, next) {
-  const authorization = getRolefromToken(req.headers.authorization) === "administrator";
+  const authorization =
+    getRolefromToken(req.headers.authorization) === "administrator";
   if (authorization) {
     const { userId, projectId } = req.body;
     const result = await removeUserFromProject(userId, projectId);
