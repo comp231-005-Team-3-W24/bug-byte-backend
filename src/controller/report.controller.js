@@ -6,9 +6,37 @@ const {
   findAcceptedReport,
   findReportsByProjectId,
   findReportsByStatusProgressSolved,
+  uploadMedia,
 } = require("../model/report.model");
 const { getRolefromToken } = require("../utils/getUserRole");
 
+async function postUploadMedia(req, res, next) {
+  try {
+    const { reportId } = req.params; // Extract reportId from URL parameters
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).send("No files were uploaded.");
+    }
+
+    // Prepare files for uploadMedia function
+    // Note: This assumes the uploadMedia function is adapted to handle the file structure provided by multer
+    const mediaFiles = req.files.map((file) => ({
+      name: file.originalname,
+      buffer: file.buffer,
+    }));
+
+    // Call uploadMedia to upload files and update the report document
+    const updatedReport = await uploadMedia(reportId, mediaFiles);
+
+    // Send back the updated report or a success message
+    res.status(200).json({
+      message: "Media uploaded successfully",
+      updatedReport,
+    });
+  } catch (error) {
+    console.error("Error uploading media:", error);
+    res.status(500).send("Error uploading media.");
+  }
+}
 async function postCreateReport(req, res, next) {
   const authorized = getRolefromToken(req.headers.authorization) === "tester";
   const reportData = req.body;
@@ -183,4 +211,5 @@ module.exports = {
   getFindAcceptedReport,
   getFindReportByProjectId,
   getReportsByStatusProgressSolved,
+  postUploadMedia
 };

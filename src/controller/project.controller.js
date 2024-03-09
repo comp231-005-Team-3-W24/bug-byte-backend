@@ -1,10 +1,15 @@
-const { allProjects, updateProjectUsers, createProject } = require("../model/project.model");
+const {
+  allProjects,
+  updateProjectUsers,
+  createProject,
+  allProjectsByUser,
+  removeUserFromProject,
+} = require("../model/project.model");
 const { findUser } = require("../model/user.model");
-const { getRolefromToken } = require("../utils/getUserRole");
+const { getRolefromToken, getUserIdFromToken } = require("../utils/getUserRole");
 
 async function getAllProejcts(req, res, next) {
-  const authorized =
-    getRolefromToken(req.headers.authorization) === "administrator";
+  const authorized = getRolefromToken(req.headers.authorization) === "administrator";
   if (authorized) {
     const projects = await allProjects();
     if (projects) {
@@ -17,7 +22,25 @@ async function getAllProejcts(req, res, next) {
     });
   }
 }
+async function getAllProjectsByUserId(req, res, next) {
+  const authorized =
+    getRolefromToken(req.headers.authorization) === "stakeholder" ||
+    getRolefromToken(req.headers.authorization) === "tester" ||
+    getRolefromToken(req.headers.authorization) === "developer";
 
+  if (authorized) {
+    const userId = getUserIdFromToken(req.headers.authorization);
+    const projects = await allProjectsByUser(userId);
+    if (projects) {
+      return res.status(200).json(projects);
+    }
+  } else {
+    res.status(401).json({
+      success: false,
+      message: "Unathorized, need stakeholder, tester or developer",
+    });
+  }
+}
 async function postCreateProject(req, res, next) {
   const authorized =
     getRolefromToken(req.headers.authorization) === "tester" ||
@@ -44,11 +67,10 @@ async function postCreateProject(req, res, next) {
 async function putUpdateProjectUsers(req, res, next) {
   const projectId = req.params.projectId;
   const newUserId = req.body.userId;
-  const authorized =
-    getRolefromToken(req.headers.authorization) === "administrator";
+  const authorized = getRolefromToken(req.headers.authorization) === "administrator";
   if (authorized) {
     try {
-        const user = await findUser({ _id: newUserId });
+      const user = await findUser({ _id: newUserId });
       const updatedProject = await updateProjectUsers(projectId, user);
       res.status(200).json(updatedProject);
     } catch (error) {
@@ -63,9 +85,23 @@ async function putUpdateProjectUsers(req, res, next) {
     });
   }
 }
-
+async function putRemoveUserFromProject(req, res, next) {
+  const authorization = getRolefromToken(req.headers.authorization) === "administrator";
+  if (authorization) {
+    const { userId, projectId } = req.body;
+    const result = await removeUserFromProject(userId, projectId);
+    res.status(200).json(result);
+  } else {
+    res.status(401).json({
+      success: false,
+      message: "Unathorized, need administrator",
+    });
+  }
+}
 module.exports = {
   getAllProejcts,
   postCreateProject,
   putUpdateProjectUsers,
+  getAllProjectsByUserId,
+  putRemoveUserFromProject,
 };
