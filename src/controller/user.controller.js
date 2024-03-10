@@ -61,10 +61,10 @@ async function httpPostRegisterUser(req, res, next) {
             });
           } else {
             const token = jwt.sign({ user }, process.env.JWT_SECRET);
+            const userData = buildUserData(user, token);
             res.status(200).json({
               success: true,
-              userData: user,
-              token,
+              data: userData,
             });
           }
         })(req, res, next);
@@ -89,16 +89,25 @@ async function httpPostLogin(req, res, next) {
       req.login(user, (err) => {
         if (err) return next(err);
         const token = jwt.sign({ user }, process.env.JWT_SECRET);
+        const userData = buildUserData(user, token);
         res.json({
           success: true,
-          status: "Login Successfully",
-          userData: user,
-          role: user.role,
-          token,
+          data: userData,
         });
       });
     }
   })(req, res, next);
+}
+
+function buildUserData(user, token) {
+  return {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    projects: user.projects,
+    role: user.role,
+    token,
+  };
 }
 
 module.exports = {
