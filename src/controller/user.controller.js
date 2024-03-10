@@ -9,7 +9,8 @@ async function httpGetAllUsers(req, res) {
     getRolefromToken(req.headers.authorization) === "administrator";
   if (authorized) {
     data = await findAllUsers();
-    res.json({ message: "Get all users", data });
+    const users = data.map((user) => buildUserData(user, null));
+    res.json({ message: "Get all users", data: users });
   } else {
     res.status(401).json({
       success: false,
