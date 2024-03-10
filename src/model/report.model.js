@@ -1,7 +1,12 @@
 const { Schema, model } = require("mongoose");
 const { findUser } = require("./user.model");
 const { initializeApp } = require("firebase/app");
-const { getStorage, ref, uploadBytes, getDownloadURL } = require("firebase/storage");
+const {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+} = require("firebase/storage");
 require("dotenv").config();
 const firebaseConfig = {
   apiKey: process.env.GOOGLE_FIREBASE_API_KEY,
@@ -58,7 +63,7 @@ async function uploadMedia(reportId, mediaFiles) {
 
     const uploadPromises = mediaFiles.map(async (file) => {
       const storageRef = ref(storage, `media/${reportId}/${file.name}`);
-      await uploadBytes(storageRef, file.buffer);
+      await uploadBytes(storageRef, file.buffer, { contentType: "image" });
       return getDownloadURL(storageRef);
     });
 
@@ -69,9 +74,9 @@ async function uploadMedia(reportId, mediaFiles) {
       const extension = getFileExtension(url);
 
       if (extension === "jpg" || extension === "png") {
-        report.media.image.push(cleanFirebaseStorageUrl(url));
+        report.media.image.push(url);
       } else if (extension === "mp4") {
-        report.media.video.push(cleanFirebaseStorageUrl(url));
+        report.media.video.push(url);
       }
     });
 
@@ -129,7 +134,12 @@ async function updateStakeholderResponsible(reportId, stakeholderId) {
     const user = await findUser({ _id: stakeholderId });
     const updatedReport = await Report.findByIdAndUpdate(
       reportId,
-      { stakeholder_responsible: { user_id: stakeholderId, user_name: user.name } },
+      {
+        stakeholder_responsible: {
+          user_id: stakeholderId,
+          user_name: user.name,
+        },
+      },
       { new: true }
     );
     return updatedReport;
@@ -167,11 +177,16 @@ async function findReportsByProjectId(projectId) {
 
 async function findReportsByStatusProgressSolved() {
   try {
-    const reports = await Report.find({ status: { $in: ["Solved", "In Progress"] } });
+    const reports = await Report.find({
+      status: { $in: ["Solved", "In Progress"] },
+    });
     return reports;
   } catch (error) {
     // Handle error
-    console.error("Error finding reports by status 'Solved' or 'In Progress':", error);
+    console.error(
+      "Error finding reports by status 'Solved' or 'In Progress':",
+      error
+    );
     throw error; // Re-throw the error for handling at a higher level
   }
 }
