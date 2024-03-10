@@ -69,7 +69,7 @@ async function uploadMedia(reportId, mediaFiles) {
 
     const urls = await Promise.all(uploadPromises);
 
-    console.log("url", urls);
+    "url", urls;
     urls.forEach((url) => {
       const extension = getFileExtension(url);
 

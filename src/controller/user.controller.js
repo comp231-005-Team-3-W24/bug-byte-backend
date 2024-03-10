@@ -50,11 +50,9 @@ async function httpPostRegisterUser(req, res, next) {
       });
     } else {
       const registerResult = await register(userToSave);
-      console.log("registerResult", registerResult);
       if (registerResult) {
         passport.authenticate("local", (err, user, info) => {
           if (err) throw err;
-          console.log("user", user);
           if (!user) {
             res.status(400).json({
               success: false,

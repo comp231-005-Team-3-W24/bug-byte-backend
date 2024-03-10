@@ -11,7 +11,6 @@ function requireAuth(req, res, next) {
   const token = req.headers.authentication.split(" ")[1];
   resolvedToken = jwt.verify(token, process.env.JWT_SECRET);
   req.user = resolvedToken.user;
-  console.log(req.user);
   if (req.isAuthenticated()) {
     return next();
   }

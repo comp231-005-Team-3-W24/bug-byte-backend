@@ -26,7 +26,6 @@ async function postUploadMedia(req, res, next) {
 
     // Call uploadMedia to upload files and update the report document
     const updatedReport = await uploadMedia(reportId, mediaFiles);
-
     // Send back the updated report or a success message
     res.status(200).json({
       message: "Media uploaded successfully",
@@ -81,7 +80,8 @@ async function putUpdateReportStatus(req, res, next) {
 }
 
 async function putUpdateDevResponsible(req, res, next) {
-  const authorized = getRolefromToken(req.headers.authorization) === "developer";
+  const authorized =
+    getRolefromToken(req.headers.authorization) === "developer";
   if (authorized) {
     try {
       const reportId = req.params.reportId; // Extracting reportId from request parameters
@@ -106,14 +106,18 @@ async function putUpdateDevResponsible(req, res, next) {
   }
 }
 async function putUpdateStakeholderResponsible(req, res, next) {
-  const authorized = getRolefromToken(req.headers.authorization) === "stakeholder";
+  const authorized =
+    getRolefromToken(req.headers.authorization) === "stakeholder";
   if (authorized) {
     try {
       const reportId = req.params.reportId; // Extracting reportId from request parameters
       const { stakeholderId } = req.body; // Extracting stakeholderId from request body
 
       // Call the updateStakeholderResponsible function to update the report's stakeholder responsible
-      const updatedReport = await updateStakeholderResponsible(reportId, stakeholderId);
+      const updatedReport = await updateStakeholderResponsible(
+        reportId,
+        stakeholderId
+      );
 
       // Respond with status 200 (OK) and the updated report
       res.status(200).json(updatedReport);
@@ -121,7 +125,9 @@ async function putUpdateStakeholderResponsible(req, res, next) {
       // Handle error
       console.error("Error updating stakeholder responsible:", error);
       // Respond with status 500 (Internal Server Error) and an error message
-      res.status(500).json({ error: "Failed to update stakeholder responsible" });
+      res
+        .status(500)
+        .json({ error: "Failed to update stakeholder responsible" });
     }
   } else {
     res.status(401).json({
@@ -132,7 +138,8 @@ async function putUpdateStakeholderResponsible(req, res, next) {
 }
 
 async function getFindAcceptedReport(req, res, next) {
-  const authorized = getRolefromToken(req.headers.authorization) === "developer";
+  const authorized =
+    getRolefromToken(req.headers.authorization) === "developer";
   if (authorized) {
     try {
       // Call the findAcceptedReport function to retrieve accepted reports
@@ -155,7 +162,8 @@ async function getFindAcceptedReport(req, res, next) {
 }
 
 async function getFindReportByProjectId(req, res, next) {
-  const authorized = getRolefromToken(req.headers.authorization) === "stakeholder";
+  const authorized =
+    getRolefromToken(req.headers.authorization) === "stakeholder";
   if (authorized) {
     try {
       const projectId = req.params.projectId; // Extracting projectId from request parameters
@@ -180,7 +188,8 @@ async function getFindReportByProjectId(req, res, next) {
 }
 
 async function getReportsByStatusProgressSolved(req, res, next) {
-  const authorized = getRolefromToken(req.headers.authorization) === "developer";
+  const authorized =
+    getRolefromToken(req.headers.authorization) === "developer";
   if (authorized) {
     try {
       // Call the findReportsByStatusProgressSolved function to retrieve reports with statuses "Solved" or "In Progress"
@@ -190,7 +199,10 @@ async function getReportsByStatusProgressSolved(req, res, next) {
       res.status(200).json(reports);
     } catch (error) {
       // Handle error
-      console.error("Error finding reports by status 'Solved' or 'In Progress':", error);
+      console.error(
+        "Error finding reports by status 'Solved' or 'In Progress':",
+        error
+      );
       // Respond with status 500 (Internal Server Error) and an error message
       res.status(500).json({
         error: "Failed to find reports by status 'Solved' or 'In Progress'",
@@ -211,5 +223,5 @@ module.exports = {
   getFindAcceptedReport,
   getFindReportByProjectId,
   getReportsByStatusProgressSolved,
-  postUploadMedia
+  postUploadMedia,
 };
