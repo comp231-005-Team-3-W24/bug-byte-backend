@@ -93,7 +93,8 @@ async function putRemoveUserFromProject(req, res, next) {
   const authorization =
     getRolefromToken(req.headers.authorization) === "administrator";
   if (authorization) {
-    const { userId, projectId } = req.body;
+    const projectId = req.params.projectId;
+    const { userId } = req.body;
     const result = await removeUserFromProject(userId, projectId);
     res.status(200).json(result);
   } else {

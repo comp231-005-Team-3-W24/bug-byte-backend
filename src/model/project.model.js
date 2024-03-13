@@ -20,7 +20,7 @@ async function allProjects() {
   return projects;
 }
 async function allProjectsByUser(userId) {
-  const projects = await Project.find({ 'users.user_id': userId });
+  const projects = await Project.find({ "users.user_id": userId });
   return projects;
 }
 async function findProject(filter) {
@@ -51,13 +51,12 @@ async function updateProjectUsers(id, user) {
 
 async function removeUserFromProject(projectId, userId) {
   try {
-    const result = await Project.updateOne(
-      { _id: projectId }, 
-      { $pull: { users: { user_id: userId } } }
-    );
+    const result = await Project.findByIdAndUpdate(projectId, {
+      $pull: { users: { user_id: userId } },
+    });
     return result; // This object contains information about the operation's outcome.
   } catch (error) {
-    console.error('Error removing user from project:', error);
+    console.error("Error removing user from project:", error);
     throw error; // Rethrow or handle error appropriately.
   }
 }
@@ -68,5 +67,5 @@ module.exports = {
   createProject,
   updateProjectUsers,
   allProjectsByUser,
-  removeUserFromProject
+  removeUserFromProject,
 };
