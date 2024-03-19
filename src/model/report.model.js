@@ -118,7 +118,10 @@ async function updateDevResponsible(reportId, devId) {
     const user = await findUser({ _id: devId });
     const updatedReport = await Report.findByIdAndUpdate(
       reportId,
-      { dev_responsible: { user_id: devId, user_name: user.name } },
+      {
+        dev_responsible: { user_id: devId, user_name: user.name },
+        status: "In Progress",
+      },
       { new: true }
     );
     return updatedReport;
@@ -129,7 +132,12 @@ async function updateDevResponsible(reportId, devId) {
   }
 }
 
-async function updateStakeholderResponsible(reportId, stakeholderId, severity) {
+async function updateStakeholderResponsible(
+  reportId,
+  stakeholderId,
+  status,
+  severity
+) {
   try {
     const user = await findUser({ _id: stakeholderId });
     const updatedReport = await Report.findByIdAndUpdate(
@@ -139,7 +147,7 @@ async function updateStakeholderResponsible(reportId, stakeholderId, severity) {
           user_id: stakeholderId,
           user_name: user.name,
         },
-        status: "Accepted",
+        status,
         severity,
       },
       { new: true }

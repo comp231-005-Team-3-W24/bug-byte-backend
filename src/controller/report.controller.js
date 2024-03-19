@@ -111,12 +111,14 @@ async function putUpdateStakeholderResponsible(req, res, next) {
   if (authorized) {
     try {
       const reportId = req.params.reportId; // Extracting reportId from request parameters
-      const { stakeholderId } = req.body; // Extracting stakeholderId from request body
+      const { stakeholderId, status, severity } = req.body; // Extracting stakeholderId from request body
 
       // Call the updateStakeholderResponsible function to update the report's stakeholder responsible
       const updatedReport = await updateStakeholderResponsible(
         reportId,
-        stakeholderId
+        stakeholderId,
+        status,
+        severity
       );
 
       // Respond with status 200 (OK) and the updated report
