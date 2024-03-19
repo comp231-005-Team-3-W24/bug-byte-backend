@@ -163,7 +163,10 @@ async function getFindAcceptedReport(req, res, next) {
 
 async function getFindReportByProjectId(req, res, next) {
   const authorized =
-    getRolefromToken(req.headers.authorization) === "stakeholder";
+    getRolefromToken(req.headers.authorization) === "stakeholder" ||
+    getRolefromToken(req.headers.authorization) === "administrator" ||
+    getRolefromToken(req.headers.authorization) === "tester" ||
+    getRolefromToken(req.headers.authorization) === "developer";
   if (authorized) {
     try {
       const projectId = req.params.projectId; // Extracting projectId from request parameters
