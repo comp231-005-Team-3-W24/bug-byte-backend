@@ -36,9 +36,13 @@ async function createProject(project) {
 
 async function updateProjectUsers(id, user) {
   try {
+    const newUser = {
+      user_id: user._id,
+      user_name: user.name,
+    };
     const updatedProject = await Project.findByIdAndUpdate(
       id,
-      { users: { user_id: user._id, user_name: user.name } },
+      { $push: { users: newUser } },
       { new: true }
     );
     return updatedProject;
@@ -51,9 +55,14 @@ async function updateProjectUsers(id, user) {
 
 async function removeUserFromProject(projectId, userId) {
   try {
-    const result = await Project.findByIdAndUpdate(projectId, {
-      $pull: { users: { user_id: userId } },
-    });
+    const test = await Project.findById(projectId);
+    const result = await Project.findByIdAndUpdate(
+      projectId,
+      {
+        $pull: { users: { user_id: userId } },
+      },
+      { new: true }
+    );
     return result; // This object contains information about the operation's outcome.
   } catch (error) {
     console.error("Error removing user from project:", error);
